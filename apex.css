@@ -2223,6 +2223,12 @@ h1, h2, h3, h4, h5, h6 {
   align-items: flex-start;
 }
 .apx-singlehero__eyebrow { font-family: var(--apx-font-body); font-weight: 700; margin-bottom: 14px; }
+/* 🔴 TWO-TONE, AND A DELIBERATE DIVERGENCE FROM THE REFERENCE (John, 2026-08-21, eye pass on the
+   preview). :8098 renders this h1 as one flat ink line — measured, both builds identical before
+   the change. Every OTHER heading on the page is a dual heading (ink/white primary + ember city),
+   so the one that names the page was the odd one out. The span classes are the shared
+   `.apx-dual__primary/__secondary`, so the two tones are the same two tones as everywhere else
+   rather than a third opinion about what the accent colour is. */
 .apx-singlehero__h1 {
   font-family: var(--apx-font-head);
   font-size: clamp(32px, 24.6px + 3.09vw, 55px);
@@ -2230,6 +2236,8 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--apx-headings);
   margin: 0 0 18px;
 }
+.apx-singlehero__h1 .apx-dual__primary { color: var(--apx-headings); }
+.apx-singlehero__h1 .apx-dual__secondary { color: var(--apx-brand); }
 .apx-singlehero__sub { color: var(--apx-steel); font-size: clamp(17px, 16.2px + 0.33vw, 19px); line-height: 1.6; margin: 0; }
 .apx-singlehero__cta { margin-top: 28px; font-size: 18px; font-weight: 600; line-height: 18px; transition: all 0.2s ease-in-out; }
 .apx-singlehero__media {
@@ -2238,6 +2246,21 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+}
+/* 🔴 THE ROUNDED CORNER LIVES ON A FRAME, NOT ON THE IMAGE. The reference nests
+   media > frame > image, puts `border-radius:14px; overflow:hidden` on the FRAME and leaves the
+   img itself square — so painting the radius onto the img would look right and compute wrong.
+   The redraw had no frame at all and shipped square corners; the gate missed it because the frame
+   node was never mapped. It is now `singlehero.frame`. */
+.apx-singlehero__frame {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  align-items: flex-start;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 .apx-singlehero__media img { display: block; width: 100%; height: 100%; object-fit: cover; }
 @media (max-width: 1023px) {
@@ -2387,12 +2410,26 @@ h1, h2, h3, h4, h5, h6 {
   min-height: 38px;
   border-radius: 10px;
   border-color: var(--apx-teal);
+  /* `color`, not only `border-color`: the glyph inside resolves its own currentColor-derived
+     properties from this, and the reference sets teal here. Setting `fill` on the svg alone left
+     the svg's currentColor at the inherited mist, which the gate caught the moment the svg itself
+     got a role. */
+  color: var(--apx-teal);
   background-color: color-mix(in srgb, var(--apx-teal) 12%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.apx-sidebarstats__icon svg { width: 17px; height: 17px; fill: var(--apx-teal); }
+/* 🔴 A DEFECT NOT REPRODUCED (John, 2026-08-21). The reference pins every one of these glyphs to
+   a 17x17 SQUARE regardless of its viewBox, so the two-person "patients helped" icon (640x512,
+   a 1.25:1 box) is squashed 20% narrower than it was drawn — measured identical on both builds
+   before this change, so it is the reference's defect faithfully inherited, not a redraw slip.
+   `height` stays 17px so the row rhythm is unchanged and `width:auto` lets each glyph keep the
+   proportions it was drawn at. Declared in band-map.json on content.stat1icon. */
+/* ⚠️ `max-width:none` is load-bearing. The first attempt kept `max-width:17px`, which clamped the
+   1.25:1 glyph straight back to 17px and re-squashed it — measured, not assumed: the re-check
+   still showed 17x17. A constraint that silently undoes the fix beside it. */
+.apx-sidebarstats__icon svg { width: auto; height: 17px; max-width: none; fill: var(--apx-teal); }
 .apx-sidebarstats__body { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
 .apx-sidebarstats__value { color: var(--apx-headings); font-family: var(--apx-font-body); font-size: 15px; font-weight: 700; text-align: left; }
 .apx-sidebarstats__label-sm { color: var(--apx-steel); font-size: 13px; line-height: 1.5; text-align: left; }
@@ -2511,6 +2548,17 @@ h1, h2, h3, h4, h5, h6 {
 .apx-faqsingle__accordioncol { flex-basis: calc(60% - 48px); justify-content: normal; }
 [data-sd="faqsingle.eyebrow"] { font-family: var(--apx-font-body); margin-bottom: 12px; }
 [data-sd="faqsingle.sub"] { font-size: 15px; line-height: 1.7; margin-bottom: 0; width: auto; }
+/* 🔴 THE SINGLE-PAGE FAQ IS A DIFFERENT WIDGET FROM THE HOME BAND'S, AND SESSION 8 REUSED THE
+   WRONG ONE. Measured on both builds: the HOME accordion really is a bordered GROUP
+   (`bde-accordion--bordered`, 2px edge, 8px radius, items flush with no border and no gap) and the
+   redraw matches it exactly — that one is correct and is untouched here. The catalog page's is a
+   `bde-frequently-asked-questions`: NO group border, NO group radius, a 12px gap, and each item
+   carrying its own 1px border and 12px radius. Session 8 bolted per-item borders onto the bordered
+   group and left the group edge and the zero gap in place, then WAIVED the 4px width difference
+   that fell out of it. That waiver was the tell, and it is now removed — the width matches.
+   John saw it as "a border around the entire accordions" and "they look like they're touching",
+   which is exactly what it was. */
+.apx-faqlist { border: 0; border-radius: 0; gap: 12px; }
 [data-sd="faqsingle.accordioncol"] .apx-accordion__item {
   background-color: var(--apx-white);
   border-radius: 12px;
@@ -2562,11 +2610,20 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  justify-content: flex-start;
+  /* `start`, not `flex-start` -- the reference writes `justify-content:start` and Chrome computes
+     the two to different strings even though they lay out identically here. */
+  justify-content: start;
   align-items: center;
   gap: 12px;
   margin-top: 26px;
 }
+/* 🔴 ZERO THE PRIMARY'S OWN MARGIN INSIDE THE ROW. `.apx-singlehero__cta` carries margin-top:28px
+   for the ONE-button layout condition-single uses, where the wrapper is a column. Inside this row
+   the wrapper already supplies margin-top:26px and `align-items:center` then distributes the
+   button's own 28px as a 14px offset — so the two buttons sat 14px apart vertically. Measured:
+   :8098 has both at the same y, the redraw did not. John caught it by eye; no role covered it,
+   which is why `singlehero.btnrow` and `singlehero.cta2` are now mapped. */
+.apx-singlehero__btnrow .apx-singlehero__cta { margin-top: 0; }
 .apx-singlehero__btnrow > a { transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
 .apx-singlehero__btnrow > a:hover { transform: translateY(-2px); }
 
@@ -2583,9 +2640,16 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   line-height: 18px;
 }
+/* 🔴 IT HOVERS TO BRAND, NOT TO ITS OWN EDGE COLOUR. The button's own
+   `--bde-button-custom-*-hover` variables say steel, and building the hover from those alone is
+   what shipped here first. The reference ALSO carries a more specific row rule --
+   `.bde-div-354-109 > *:nth-child(2) a:hover { background: ember; border-color: ember }` -- which
+   wins. Both rules were read in the same session and only the losing one made it into the CSS.
+   Caught by the behaviour gate, which is the only check that would ever have seen it: at rest the
+   two builds were byte-identical. */
 .apx-btn--outline-steel:hover {
-  background-color: var(--apx-steel);
-  border-color: var(--apx-steel);
+  background-color: var(--apx-brand);
+  border-color: var(--apx-brand);
   color: var(--apx-white);
 }
 .apx-singlehero__btnrow .apx-btn--primary { font-size: 18px; font-weight: 600; line-height: 18px; }
@@ -2898,6 +2962,14 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 12px;
   background-color: var(--apx-white);
 }
+/* The star row. NEW — the reference has none on this card (measured: zero SVGs in its review card
+   on both builds before this change), so this is John's 2026-08-21 eye-pass addition, not a
+   reproduction. Colour is the palette's own `--apx-gold`. NOT the trust band's star chip colour --
+   that one is `--apx-chip-3-fg`, an amber bound to that band's chip pair, and borrowing it would
+   tie a review rating to a chip token that has nothing to do with it. Checked before choosing. */
+.apx-revcard__stars { display: flex; flex-direction: row; gap: 3px; margin-bottom: 12px; }
+.apx-revcard__stars svg { width: 16px; height: 16px; fill: var(--apx-gold); display: block; }
+
 .apx-revcard__text {
   color: var(--apx-headings);
   font-family: var(--apx-font-body);
