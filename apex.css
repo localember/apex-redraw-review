@@ -1708,7 +1708,13 @@ h1, h2, h3, h4, h5, h6 {
 /* No colour change on hover — a shadow deepens and the button lifts, and that is the whole gesture. */
 .apx-btn--offer:hover { box-shadow: 0 12px 32px 0 rgba(0, 0, 0, 0.15); transform: translateY(-2px); }
 
+/* 🔴 `display:flex`, matching the reference — found 2026-08-22 because the new offerglobal band maps
+   this role as `both` where every existing offer band maps it as `text`, and `text` never compares
+   display. The live link has been a flex container on every page since it was built and the redraw
+   has been rendering it inline-turned-block. A stricter role on one band exposed a difference five
+   bands had been passing over. */
 .apx-offercard__phone {
+  display: flex;
   position: relative;
   z-index: 1;
   margin-top: 20px;
@@ -3061,4 +3067,321 @@ h1, h2, h3, h4, h5, h6 {
 @media (max-width: 575px) {
   .apx-stickybar__inner { padding: 10px 16px !important; }
   .apx-stickybar__phone { display: none !important; }
+}
+
+/* ============================================================================
+   THE FOUR SMALL PAGES — contact · patient-stories · new-patient-special · blog
+   ----------------------------------------------------------------------------
+   Session 10. Same discipline as every band before them: every number read off
+   :8098's own served CSS or measured on the live element, never carried over
+   from a same-sounding family without a diff first.
+
+   ⚠️ ONE CORRECTION TO THE BRIEF, FOUND BY MEASURING. "Offer and footer are the
+   reuses" is true of /patient-stories/ and /blog/, whose global block is post
+   244 (the offer). /contact/ and /new-patient-special/ carry post 250 instead,
+   which is a REVIEWS block — a different global entirely. Three review-band
+   shapes exist across the design, not one.
+   ============================================================================ */
+
+/* ── page-hero, two more variants ────────────────────────────────────────────
+   /contact/ and /patient-stories/ are the /about/ pagehero with NO eyebrow and
+   a 560px sub measure. The CSS diff against post-279 came back with exactly one
+   extra rule (`width:560px` on the sub) and nothing else — but a CSS diff is
+   blind to STRUCTURE, and the DOM says those two heroes have no eyebrow node at
+   all. Both differences are real and only one of them was visible in the CSS.
+   /blog/'s hero is byte-identical to /about/'s and takes no variant. */
+.apx-pagehero__sub--m560 { width: 560px; max-width: 100%; }
+
+/* ── contact: the 57/43 row ──────────────────────────────────────────────────
+   Declared 57/43 with an 80px gap, so both columns overflow and flex-shrink
+   pulls them back — `calc((100% - 80px) * ratio)` is that arithmetic resolved,
+   the same formula `.apx-singlehero__row` and `.apx-area__row` already use. */
+.apx-contact__row { display: flex; flex-direction: row; flex-wrap: nowrap; gap: 80px; }
+.apx-contact__formcol { width: calc((100% - 80px) * 0.57); display: flex; flex-direction: column; align-items: flex-start; }
+.apx-contact__infocol { width: calc((100% - 80px) * 0.43); display: flex; flex-direction: column; align-items: flex-start; }
+.apx-contact__h2 {
+  margin: 0 0 8px;
+  font-family: var(--apx-font-head);
+  font-size: clamp(28px, 3.5vw, 40px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+}
+.apx-contact__h2 .apx-dual__primary { color: var(--apx-headings); }
+.apx-contact__h2 .apx-dual__secondary { color: var(--apx-brand); }
+.apx-contact__sub { font-size: 16px; margin-bottom: 32px; color: var(--apx-steel); }
+
+/* The info card, and the icon rows inside it. */
+.apx-infocard {
+  width: 100%;
+  max-width: 100%;
+  padding: 32px;
+  border: 1px solid var(--apx-cloud);
+  border-radius: 16px;
+  background-color: var(--apx-snow);
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.apx-infocard__h3 {
+  margin: 0 0 20px;
+  font-family: var(--apx-font-head);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--apx-headings);
+}
+.apx-inforows { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
+.apx-inforow { width: 100%; display: flex; flex-direction: row; flex-wrap: nowrap; align-items: start; gap: 12px; }
+.apx-inforow__icon { width: 20px; min-height: 20px; display: flex; flex-direction: column; align-items: flex-start; }
+.apx-inforow__icon svg { width: 17px; height: 17px; fill: var(--apx-teal); }
+.apx-inforow__body { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+.apx-inforow__line {
+  color: var(--apx-steel);
+  font-family: var(--apx-font-body);
+  font-size: clamp(16px, 15.61px + 0.109vw, 17px);
+  line-height: 1.6;
+}
+/* The phone row is a rich-text link at the design's h5 size in brand, not a plain line. */
+.apx-inforow__phone p { margin: 0; }
+.apx-inforow__phone a {
+  color: var(--apx-brand);
+  font-size: clamp(16px, 14.43px + 0.435vw, 20px);
+  font-weight: 700;
+  line-height: 1.3;
+  text-decoration: none;
+}
+.apx-inforow__note { color: var(--apx-mist); font-family: var(--apx-font-body); font-size: 14px; line-height: 1.6; }
+.apx-inforow__h3 {
+  margin: 0 0 6px;
+  color: var(--apx-headings);
+  font-family: var(--apx-font-head);
+  font-size: clamp(16px, 15.22px + 0.217vw, 18px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+/* ⚠️ 34/66 with a 12px gap and NO shrink compensation — unlike every other split
+   in this design. The reference declares plain percentages on a row whose total
+   is 100%, so the gap pushes the pair 12px past the container and both shrink;
+   `calc((100% - 12px) * n)` is that resolved, same as the others. */
+.apx-hourrow { width: 100%; display: flex; flex-direction: row; flex-wrap: nowrap; align-items: center; gap: 12px; }
+.apx-hourrow__day {
+  width: calc((100% - 12px) * 0.34);
+  color: var(--apx-headings);
+  font-family: var(--apx-font-body);
+  font-size: 15px;
+  font-weight: 700;
+}
+.apx-hourrow__hours {
+  width: calc((100% - 12px) * 0.66);
+  text-align: right;
+  color: var(--apx-steel);
+  font-family: var(--apx-font-body);
+  font-size: 15px;
+}
+.apx-contact__map { width: 100%; max-width: 100%; height: 360px; margin-top: 24px; overflow: hidden; border-radius: 14px; }
+.apx-contact__map iframe { width: 100%; height: 100%; border: 0; display: block; }
+@media (max-width: 767px) {
+  .apx-contact__row { flex-direction: column; align-items: center; gap: 48px; }
+  .apx-contact__formcol, .apx-contact__infocol { width: 100%; }
+}
+
+/* ── the native form ─────────────────────────────────────────────────────────
+   Breakdance's own form widget, reproduced from its COMPUTED values rather than
+   its declared CSS: the widget's look comes from a global stylesheet plus a
+   handful of `--bde-form-*` custom properties, so reading post-275.css alone
+   would have given the overrides and none of the base.
+   A 12-column grid where every field spans all 12 — that is genuinely what the
+   reference computes, not a one-column flex wearing a grid's name.
+   🔴 THE INPUT TEXT COLOUR IS CLOUD (#e2e8f0) ON A WHITE FIELD, which is what
+   the reference computes and is very nearly invisible. Reproduced faithfully
+   and filed against the BD emitter — see designs/apex-PUNCHLIST.md. */
+.apx-form {
+  min-height: 0;
+  border-color: var(--apx-cloud);
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+.apx-form__field { grid-column: span 12; position: relative; border-color: var(--apx-cloud); display: flex; flex-direction: column; align-items: flex-start; }
+/* Visually hidden, not removed: the reference keeps the label in the accessibility
+   tree and hides it with a 1x1 box, and a screen reader still reads every field. */
+.apx-form__label {
+  display: block;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  margin-bottom: -1px;
+  font-family: var(--apx-font-body);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 18px;
+  color: var(--apx-cloud);
+}
+.apx-form__required { color: #b91c1c; font-family: var(--apx-font-body); font-size: 18px; font-weight: 500; line-height: 18px; }
+.apx-form__input {
+  display: block;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--apx-cloud);
+  border-radius: 6px;
+  background-color: var(--apx-white);
+  font-family: var(--apx-font-body);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 18px;
+  color: var(--apx-cloud);
+  /* The focus border change is animated on the reference. Only the behaviour gate sees this: at
+     rest the two inputs were byte-identical, and the transition is the whole difference between a
+     border that eases to brand and one that snaps. */
+  transition: all 0.3s ease-in-out;
+}
+.apx-form__input:focus { border-color: var(--apx-brand); background-color: var(--apx-white); outline: none; }
+textarea.apx-form__input { min-height: 100px; line-height: 1.4; resize: vertical; }
+.apx-form__footer { grid-column: span 12; border-color: var(--apx-cloud); display: flex; flex-direction: row; align-items: end; justify-content: flex-start; }
+.apx-form__submit {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  border: 1px solid transparent;
+  border-radius: 100px;
+  background-color: var(--apx-brand);
+  color: var(--apx-white);
+  font-family: var(--apx-font-head);
+  font-size: 16.8px;
+  font-weight: 600;
+  line-height: 16.8px;
+  letter-spacing: 0.336px;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+.apx-form__submit:hover { background-color: var(--apx-brand-hover); }
+
+/* ── the shared reviews block (post 250) and its wrapper section ─────────────
+   The CARD is `.apx-revcard` from session 9, reused after a rule-for-rule diff
+   against post-250.css — same 24/26 padding, 12px radius, white on ink@12%,
+   15.5px/1.65 body. ONE difference, and it is a real one: this instance spaces
+   quote from byline with a 10px flex GAP where the service page uses a 12px
+   margin on the text. Two different numbers doing the same job, so the gap is a
+   modifier rather than a change to the shared card.
+   The byline also carries an em-dash prefix here that the service page has not. */
+.apx-revcard--gap { gap: 10px; }
+.apx-revcard--gap .apx-revcard__text { margin-bottom: 0; }
+.apx-reviewsblock { background-color: var(--apx-snow); border-top: 1px solid var(--apx-cloud); }
+/* ⚠️ A GLOBAL BLOCK NESTS A SECOND SECTION CONTAINER INSIDE THE WRAPPER'S. On the reference the
+   page's own section-container is 1200 and post 250's container sits inside it at 1160, so the grid
+   lands at 1120 rather than 1160. Reproducing the block as one flat band made every width in it
+   40px too wide -- uniformly, which is the tell that a whole box is missing rather than a value
+   being wrong. */
+/* ⚠️ BOTH containers carry the 100px band rhythm, so a global block is 200px of padding deep at the
+   top. Measured, and corrected mid-session from the opposite assumption: moving the padding onto the
+   nested container alone made the OUTER differ by the same 100px the inner had been differing by,
+   which is what "I moved it instead of adding it" looks like. */
+.apx-globalblock__outer { justify-content: normal; }
+.apx-globalblock__inner {
+  padding-block: var(--apx-band-pad);
+  min-height: 0;
+  width: 100%;
+  max-width: var(--apx-maxw);
+  margin-inline: auto;
+  padding-inline: var(--apx-gut);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── blog: the post list ─────────────────────────────────────────────────────
+   A white card on a cloud hairline, the whole card clickable via an `a::after`
+   overlay so the title link covers it without swallowing layout width — the same
+   idiom `.apx-svccard` uses. Lifts 8px on hover, which is deeper than the 4px
+   every other card family in this design uses; measured, not normalised. */
+.apx-bloggrid {
+  display: grid;
+  flex-direction: column;
+  align-items: stretch;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+.apx-blogcard {
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border: 1px solid var(--apx-cloud);
+  border-radius: 16px;
+  background-color: var(--apx-white);
+  overflow: hidden;
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.apx-blogcard a::after { content: ""; position: absolute; inset: 0; z-index: 3; }
+.apx-blogcard:hover { transform: translateY(-8px); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08); }
+.apx-blogcard__body { width: 100%; padding: 22px 24px 24px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+/* 🔴 THE POST TITLE IS A DEFAULT BREAKDANCE BUTTON ON THE REFERENCE, AND IT LOOKS LIKE ONE.
+   Verified by eye, not just by computed style: each card's headline renders as a dark navy pill
+   filling the top of the card (#111827 ground, white centred text, 14/24 padding, 3px radius) —
+   Breakdance's UNSTYLED button default, because the emitter built the title as a Button element and
+   never set its colours. The design's own heading treatment is nowhere near it.
+   Reproduced faithfully because fidelity is what the gate measures and this is not ours to redesign
+   unilaterally; filed in designs/apex-PUNCHLIST.md and raised with John as a taste call. If he rules
+   it a headline, this whole block becomes the Outfit/ink heading the rest of the design uses. */
+.apx-blogcard__title {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 14px 24px;
+  border: 1px solid rgb(17, 24, 39);
+  border-radius: 3px;
+  background-color: rgb(17, 24, 39);
+  font-family: var(--apx-font-body);
+  font-size: clamp(16px, 14.43px + 0.435vw, 20px);
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+  color: var(--apx-white);
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+}
+/* Breakdance's default button hover, which the title inherits along with everything else. */
+.apx-blogcard__title:hover { background-color: rgb(55, 65, 81); border-color: rgb(55, 65, 81); }
+.apx-blogcard__excerpt { color: var(--apx-steel); font-family: var(--apx-font-body); font-size: 15px; line-height: 1.6; }
+.apx-blogcard__excerpt p { margin: 0; }
+.apx-blogcard__meta { color: var(--apx-mist); font-family: var(--apx-font-body); font-size: 12px; font-weight: 600; }
+/* The list band carries no top padding — the hero above it already closed the gap. */
+.apx-bloglist__inner { padding-top: 0; padding-bottom: clamp(80px, 10vw, 120px); align-items: flex-start; }
+@media (max-width: 1023px) { .apx-bloggrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 767px)  { .apx-bloggrid { grid-template-columns: repeat(1, minmax(0, 1fr)); } }
+
+
+/* ── the four footer nodes nothing had ever looked at ────────────────────────
+   Mapped 2026-08-22, closing four of the 35 role-coverage blind spots. All four
+   were carrying real drift the moment a role pointed at them: the reference
+   makes the logo link and both link-column wrappers flex columns, and the logo
+   link inherits BRAND as its currentColor. The redraw had them as plain blocks
+   in mist. Nothing was wrong with the CSS — nothing was measuring it. */
+[data-sd="footer.logolink"] {
+  /* Breakdance's container-link default transition, which only the behaviour gate ever saw. */
+  transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out,
+              box-shadow 0.3s ease-in-out, color 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: var(--apx-brand);
+  border-color: var(--apx-brand);
+}
+[data-sd="footer.serviceswrap"],
+[data-sd="footer.conditionswrap"] {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }

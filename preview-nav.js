@@ -8,7 +8,8 @@
 (function () {
   var PAGES = { '/': 'index.html', '/about/': 'about.html', '/services/': 'services.html',
                 '/conditions/': 'conditions.html', '/back-pain/': 'back-pain.html',
-                '/chiropractic/': 'chiropractic.html' };
+                '/chiropractic/': 'chiropractic.html', '/contact/': 'contact.html',
+                '/patient-stories/': 'patient-stories.html', '/blog/': 'blog.html' };
   document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('a[href^="/"]').forEach(function (a) {
       var href = a.getAttribute('href');
