@@ -9,13 +9,16 @@
   var PAGES = { '/': 'index.html', '/about/': 'about.html', '/services/': 'services.html',
                 '/conditions/': 'conditions.html', '/back-pain/': 'back-pain.html',
                 '/chiropractic/': 'chiropractic.html', '/contact/': 'contact.html',
-                '/patient-stories/': 'patient-stories.html', '/blog/': 'blog.html' };
+                '/patient-stories/': 'patient-stories.html', '/blog/': 'blog.html',
+                '/new-patient-special/': 'new-patient-special.html',
+                '/dr-sarah-whitfield/': 'dr-sarah-whitfield.html',
+                '/privacy-policy/': 'privacy-policy.html' };
   document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('a[href^="/"]').forEach(function (a) {
       var href = a.getAttribute('href');
       if (PAGES[href]) { a.setAttribute('href', './' + PAGES[href]); return; }
       a.setAttribute('href', '#');
-      a.setAttribute('title', 'Not part of this preview — ' + href + ' is not one of the six pages built so far.');
+      a.setAttribute('title', 'Not part of this preview — ' + href + ' is not one of the twelve pages built so far.');
       a.style.cursor = 'not-allowed';
       a.addEventListener('click', function (e) { e.preventDefault(); });
     });
