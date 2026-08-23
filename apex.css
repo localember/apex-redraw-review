@@ -1385,6 +1385,13 @@ h1, h2, h3, h4, h5, h6 {
   pointer-events: none;
 }
 
+/* 🔴 JOHN'S EYE PASS, 2026-08-22 — a declared deviation, not a reference value. :8098's story card
+   holds zero svgs; he asked for the same gold row the service page's review card already carries.
+   The VALUES are that component's (16px, 3px gap, gold), so the two read as one design; the class
+   is its own because `.apx-storycard` and `.apx-revcard` differ in every other number and sharing
+   the rule would drag one band's spacing onto the other. See WAIVERS.md. */
+.apx-storycard__stars { display: flex; flex-direction: row; gap: 3px; margin-bottom: 12px; }
+.apx-storycard__stars svg { width: 16px; height: 16px; fill: var(--apx-gold); display: block; }
 .apx-storycard__text {
   position: relative;
   z-index: 1;
@@ -1557,7 +1564,13 @@ h1, h2, h3, h4, h5, h6 {
    accordion component is styled off it directly and it is a different value from --apx-cloud
    (#e5e7eb vs #e2e8f0), close enough to look identical in a screenshot and different enough that a
    computed-style diff catches it. */
-.apx-accordion { width: 100%; display: flex; flex-direction: column; gap: 0; border: 2px solid var(--apx-grey-200); border-radius: 8px; }
+/* 🔴 `overflow: hidden` IS JOHN'S, NOT THE REFERENCE'S (eye pass, 2026-08-22). Measured on both
+   builds first: :8098's accordion computes `overflow: visible` and so did this one, so the open
+   panel's square background paints over the group's own 8px corners and the box stops being
+   rounded the moment anyone uses it. A declared deviation — the reference has the same defect and
+   he ruled it fixed. The radius the clip protects is the reference's own 8px; nothing else moved.
+   See WAIVERS.md. */
+.apx-accordion { width: 100%; display: flex; flex-direction: column; gap: 0; border: 2px solid var(--apx-grey-200); border-radius: 8px; overflow: hidden; }
 
 .apx-accordion__item { outline: 0; }
 .apx-accordion__item:not(:last-child) { border-bottom: 2px solid var(--apx-grey-200); }
@@ -3907,3 +3920,41 @@ textarea.apx-form__input { min-height: 100px; line-height: 1.4; resize: vertical
   .apx-practgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 767px) { .apx-practgrid { grid-template-columns: repeat(1, minmax(0, 1fr)); } }
+
+/* ── catalog prose: COLUMNS and TIMELINE (post 372 /prenatal/, session 12) ────────────────────────
+   Two block types only one catalog entry uses, and the static renderer had neither — building the
+   rest of the catalog for the preview is what surfaced them. Every value off post-372.css. */
+.apx-prose__cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-bottom: 24px; align-items: stretch; }
+.apx-prose__col { display: flex; flex-direction: column; align-items: flex-start; }
+/* Teal / body face / 0.14em — the practitioner hero's eyebrow register, a THIRD eyebrow in this
+   design and deliberately not `.apx-eyebrow` (Outfit / brand / 0.12em). */
+.apx-prose__collabel {
+  color: var(--apx-teal);
+  font-family: var(--apx-font-body);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.apx-prose__collist ul { margin: 0; padding-left: 40px; }
+.apx-prose__collist ul li { font-size: 16px; line-height: 1.7; color: var(--apx-steel); }
+.apx-prose__steps { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; margin-bottom: 24px; }
+.apx-prose__step { display: flex; flex-direction: row; flex-wrap: nowrap; align-items: flex-start; gap: 16px; }
+/* ⚠️ NO BACKGROUND, AND THE NUMBER IS WHITE. That is the reference: post 372 node 137 computes
+   `rgba(0,0,0,0)` and its number is #fff, so the step numbers are invisible on the white page.
+   Reproduced faithfully — nobody has ruled on it — and filed in designs/apex-PUNCHLIST.md. */
+.apx-prose__stepnum { min-width: 34px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.apx-prose__stepnumtext { text-align: center; color: var(--apx-white); font-family: var(--apx-font-body); font-size: 15px; font-weight: 700; }
+.apx-prose__stepbody { display: flex; flex-direction: column; align-items: flex-start; }
+.apx-prose__steptitle {
+  margin: 0 0 6px;
+  font-family: var(--apx-font-head);
+  font-size: clamp(18px, 17.22px + 0.217vw, 20px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--apx-headings);
+}
+.apx-prose__steptext { font-family: var(--apx-font-body); font-size: 16px; line-height: 1.65; color: var(--apx-steel); }
+@media (max-width: 767px) { .apx-prose__cols { grid-template-columns: repeat(1, minmax(0, 1fr)); } }

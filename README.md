@@ -3,69 +3,62 @@
 The **Apex static source** (`tools/static-build/designs/apex/` in the `localember` repo), frozen so
 it has a link that outlives the local sandbox. `noindex, nofollow` on every page.
 
-This is a **design review**, not a client preview: it is the redraw of the Apex Breakdance reference
-build (`apex-solo`, localhost:8098), page by page, and each page is only here once every band on it
-passes four checks against that reference — a property-level computed-style diff, a behaviour diff,
-an icon-glyph comparison, and a role-coverage check that asks what the other three never looked at.
+Each page is only here once every band on it passes four checks against the Breakdance reference
+build (`apex-solo`, localhost:8098) — a property-level computed-style diff, a behaviour diff, an
+icon-glyph comparison, and a role-coverage check that asks what the other three never looked at.
 
-## Twelve archetypes — the set is COMPLETE against the reference
+## 55 pages — the navigation works now
 
-| | archetype | session |
-| --- | --- | --- |
-| [Home](./index.html) | home | 1–3 |
-| [About](./about.html) | about | 4 |
-| [Services](./services.html) | services index | 6 |
-| [Conditions](./conditions.html) | conditions index | 7 |
-| [Back pain](./back-pain.html) | condition single | 8 |
-| [Chiropractic care](./chiropractic.html) | service single | 9 |
-| [Contact](./contact.html) | contact — native form, info card, map | 10 |
-| [Patient stories](./patient-stories.html) | testimonials | 10 |
-| [Blog](./blog.html) | blog index | 10 |
-| [New patient special](./new-patient-special.html) | **offer page — ember hero, included grid, booking** | **11** |
-| [Dr. Sarah Whitfield](./dr-sarah-whitfield.html) | **practitioner** | **11** |
-| [Privacy policy](./privacy-policy.html) | **legal (one of seven)** | **11** |
+**Your eye pass of 2026-08-22 is done.** The biggest change is that the preview is no longer twelve
+pages with dead links: every service, condition, legal page and staff profile the site links to is
+now built, so you can actually click through it.
 
-**Every page on the reference now has a redraw.** Nothing on `apex-solo` is unbuilt.
+| | |
+| --- | --- |
+| [Home](./index.html) · [About](./about.html) · [Contact](./contact.html) · [Patient stories](./patient-stories.html) · [Blog](./blog.html) | the core pages |
+| [Services](./services.html) · [Conditions](./conditions.html) | the two archives — every card links to its page |
+| [New patient special](./new-patient-special.html) | the offer page |
+| [Dr. Sarah Whitfield](./dr-sarah-whitfield.html) · [Dr. Alan Reyes](./dr-alan-reyes.html) · [Marta Quinn](./marta-quinn.html) · [Jo Ellery](./jo-ellery.html) | all four staff profiles |
+| [Chiropractic](./chiropractic.html) · [Back pain](./back-pain.html) · …and 33 more | every catalog page |
+| [Privacy policy](./privacy-policy.html) · [Terms](./terms-of-service.html) · …and 5 more | all seven legal pages |
 
-## The two things you ruled on are done
+## What changed, item by item
 
-- **The contact form's input text now reads.** The reference paints it `cloud` (#e2e8f0) on a white
-  field, so anything typed disappeared; it is the design's ink now, on both this page and the new
-  patient special's booking form. Its placeholder keeps the reference's own grey.
-- **Blog post titles are headings again.** They were rendering as Breakdance's default navy pill
-  button, because the reference's emitter built the title as a Button and never set its colours.
-  They now use the same Outfit/ink treatment as every other card title in the design, with the
-  brand-colour hover the rest of the links use.
+1. **Condition and service cards link to their pages.** They always did in the build — the *preview*
+   only had twelve pages, so the shim greyed out every link that pointed anywhere else. 43 more
+   pages are built now and the links are live.
+2. **The homepage review cards have gold five-star rows.** The reference has none, so this is a
+   deliberate departure — the same one you ruled for the service page on 2026-08-21.
+3. **All seven legal pages are wired and reachable** from the footer of every page.
+4. **The two missing service images are in** (red light therapy, weight loss), plus two condition
+   images that turned out to be missing the same way. One image is still broken and it is not ours
+   to guess at — see below.
+5. **The FAQ accordion clips its corners** when a panel is open. The reference does not; you ruled
+   it should.
+6. **CTA wording follows the record.** When a practice has an active special, the calls to action
+   read the offer; with no offer they read generic booking wording. **This demo record has no
+   offer, so the preview shows the generic wording** — the mechanism is what changed, not the words
+   on this page.
 
-Both are written up in the design's `WAIVERS.md`, with you named as the reason.
+## Two things want your eye
 
-**And one more that came out from under the first:** the reference's form inputs all carry
-placeholder text and the redraw was emitting none — so with the invisible input colour, our contact
-form was five empty boxes. Fixed. No automated check could have found it: a placeholder is an
-attribute, and every gate we run compares computed styles.
+- **The step numbers on [prenatal](./prenatal.html) are invisible** — white on white. That is the
+  reference's own defect, faithfully reproduced, and one line to fix the day you say so.
+- **The prenatal hero has no picture.** The shared catalog names a file left over from an old build
+  and it does not exist. Picking a replacement is a content call, so nothing was substituted.
 
-## One thing on the practitioner page wants your eye
+## Still missing
 
-The "rest of the team" cards each link to that person's own page — **including the front-desk member,
-who has no letters after their name.** That follows your 2026-08-07 ruling that every named staff
-member gets a page. The reference predates it and shows no link on that card, so this is the one
-place the redraw deliberately shows MORE than the thing it copies.
-
-## One question left over from the reference
-
-The new patient special's "What's Included" grid has six cards, and **the third has no heading** —
-just the emoji and the body text, where the other five have a title. That is the reference's own
-gap, not a transcription slip. It is reproduced as-is. If it should read something ("Digital
-X-Rays"?), that is one line to add and it is your call, not ours to invent.
+**Blog post pages.** The three posts on [the blog index](./blog.html) are the only dead links left.
+The reference has real pages for them and the redraw has never built that page type — so the
+archetype set is one short of complete, which an earlier note got wrong.
 
 ## What is not real here
 
-- **`preview-nav.js` is a preview-only shim, not part of the build.** The redraw's internal links are
-  absolute (`/services/`, `/contact/`), which is right for a real site and wrong on a GitHub Pages
-  project path. The shim points the twelve built pages at each other and visibly disables every other
-  link rather than letting a dead one look live. Nothing else differs from the build.
+- **`preview-nav.js` is a preview-only shim, not part of the build.** The build's internal links are
+  absolute (`/services/`), which is right for a real site and wrong on a GitHub Pages project path.
+  The shim points the 55 built pages at each other and visibly disables anything else rather than
+  letting a dead link look live. Nothing else differs from the build.
 - **Forms do not submit** and the Google Maps embeds load from Google, same as on the real site.
-- **Two service-card images 404 on the CDN** (`Red Light Therapy`, `Weight Loss`) — a filed registry
-  defect, not a redraw bug.
 - **Team photos are the fleet placeholder silhouette.** `apex-solo` is a demo record with no real
-  headshots; a real client's own photos drop straight in.
+  headshots; a client's own photos drop straight in.
