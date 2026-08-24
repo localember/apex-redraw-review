@@ -2601,10 +2601,36 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 12px;
   border: 1px solid var(--apx-cloud);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  /* 🔴 JOHN'S EYE PASS, 2026-08-24 — a declared deviation. The reference computes `visible` here too
+     (measured on both), so the button's hover fill paints its own square corners past the item's
+     12px radius and the tint sits proud of the card. He saw it on /services/ and /conditions/:
+     "where it goes outside of the accordion". Same ruling he gave the home accordion on 08-22.
+     See WAIVERS.md. */
+  overflow: hidden;
+}
+/* 🔴 AND A REAL DEFECT UNDERNEATH IT, WHICH IS WHY THE CORNERS LOOKED DOUBLED. The HOME accordion's
+   `:first-child`/`:last-child` rules give their button an 8px top/bottom radius, correct for a
+   bordered GROUP whose items are flush. They were leaking into the catalog family, so this button
+   computed `8px 8px 0 0` inside a 12px-rounded item where the reference computes `0px` — two
+   different corner radii stacked, which is the mismatch in the screenshot rather than the overflow
+   alone. Measured, not inferred. ⚠️ INVISIBLE TO THE GATE: `faqsingle.qbutton` was kind `text`, and
+   `text` does not compare `borderRadius`. Promoted to `both` in band-map.json so it is measured now. */
+[data-sd="faqsingle.accordioncol"] .apx-accordion__item:first-child .apx-accordion__button,
+[data-sd="faqsingle.accordioncol"] .apx-accordion__item:last-child .apx-accordion__button {
+  border-radius: 0;
 }
 [data-sd="faqsingle.accordioncol"] .apx-accordion__item:hover {
   border-color: color-mix(in srgb, var(--apx-brand) 30%, transparent);
 }
+/* 🔴 THE TYPE BELONGS ON THE BUTTON, NOT THE INNER SPAN, and that was hidden by a mispaired role.
+   The reference's `.bde-faq__question` IS the clickable row and carries the title type on itself;
+   the redraw wraps its button in an <h3>, so anything not declared on the button inherits h3
+   typography (35.16px). While `faqsingle.qbutton` pointed at the inner `.apx-accordion__title`
+   span, the comparison read the span's declared type and matched — the BUTTON, which is what the
+   reference styles, was never measured. Session 9 then waived a hover difference on this role with
+   an explanation ("the title SPAN's own backgroundColor does not pick up the fill") that was a
+   description of the mispairing. Role repointed at the button, waiver dropped, type moved here. */
+[data-sd="faqsingle.accordioncol"] .apx-accordion__button,
 [data-sd="faqsingle.accordioncol"] .apx-accordion__title {
   font-family: var(--apx-font-head);
   font-size: 22.5px;
@@ -2613,6 +2639,11 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
   background-color: transparent;
   transition: all 0s ease;
+}
+[data-sd="faqsingle.accordioncol"] .apx-accordion__button {
+  display: inline-flex;
+  gap: normal;
+  padding: 20px 24px;
 }
 [data-sd="faqsingle.accordioncol"] .apx-accordion__button:hover .apx-accordion__title {
   background-color: var(--apx-snow);
@@ -3941,11 +3972,35 @@ textarea.apx-form__input { min-height: 100px; line-height: 1.4; resize: vertical
 .apx-prose__collist ul li { font-size: 16px; line-height: 1.7; color: var(--apx-steel); }
 .apx-prose__steps { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; margin-bottom: 24px; }
 .apx-prose__step { display: flex; flex-direction: row; flex-wrap: nowrap; align-items: flex-start; gap: 16px; }
-/* ⚠️ NO BACKGROUND, AND THE NUMBER IS WHITE. That is the reference: post 372 node 137 computes
-   `rgba(0,0,0,0)` and its number is #fff, so the step numbers are invisible on the white page.
-   Reproduced faithfully — nobody has ruled on it — and filed in designs/apex-PUNCHLIST.md. */
-.apx-prose__stepnum { min-width: 34px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; text-align: center; }
-.apx-prose__stepnumtext { text-align: center; color: var(--apx-white); font-family: var(--apx-font-body); font-size: 15px; font-weight: 700; }
+/* 🔴 RULED 2026-08-24 — JOHN'S EYE PASS. The reference's badge has NO ground and a WHITE number
+   (post 372 node 137 computes `rgba(0,0,0,0)`, node 138 is #fff), so its step numbers are invisible
+   on the white page. He ruled they should read, and should match the service pages: *"the step
+   numbers on that page as well they should match the other page like chiropractic so we should
+   have them"*.
+
+   So this is `.apx-processstep__num`'s treatment VALUE FOR VALUE — 56px box, 2px cloud edge, 16px
+   radius, snow ground, ink number, same brand hover — rather than a look invented for one catalog
+   page. Its own class because a `timeline` block sits inside catalog PROSE while the process band
+   is a band: they share no wrapper, and sharing a rule would couple two things that only look
+   alike. A declared deviation; see WAIVERS.md. */
+.apx-prose__stepnum {
+  width: 56px;
+  min-width: 56px;
+  min-height: 56px;
+  border: 2px solid var(--apx-cloud);
+  border-radius: 16px;
+  background-color: var(--apx-snow);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.apx-prose__step:hover .apx-prose__stepnum { background: var(--apx-brand); border-color: var(--apx-brand); }
+.apx-prose__step:hover .apx-prose__stepnum * { color: var(--apx-white); }
+.apx-prose__stepnumtext { text-align: center; color: var(--apx-headings); font-family: var(--apx-font-body); font-size: 20px; font-weight: 700; }
 .apx-prose__stepbody { display: flex; flex-direction: column; align-items: flex-start; }
 .apx-prose__steptitle {
   margin: 0 0 6px;

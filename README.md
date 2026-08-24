@@ -40,12 +40,17 @@ now built, so you can actually click through it.
    offer, so the preview shows the generic wording** — the mechanism is what changed, not the words
    on this page.
 
-## Two things want your eye
+## Your 08-24 notes are done
 
-- **The step numbers on [prenatal](./prenatal.html) are invisible** — white on white. That is the
-  reference's own defect, faithfully reproduced, and one line to fix the day you say so.
-- **The prenatal hero has no picture.** The shared catalog names a file left over from an old build
-  and it does not exist. Picking a replacement is a content call, so nothing was substituted.
+- **The accordion hover no longer spills past the card** on the service and condition pages. Two
+  things were wrong there, not one: it wasn't clipping, *and* the button had picked up the homepage
+  accordion's corner radius, so two different roundings were stacked.
+- **[Prenatal](./prenatal.html) uses the pregnancy image from its own service card**, as you said.
+- **Its step numbers now match [chiropractic](./chiropractic.html)** — same badge, same treatment.
+- **The buttons read the offer.** Every call to action across the site now says "Claim Your Offer"
+  instead of a generic booking verb, because a practice with no stated special is on the standard
+  complimentary consultation. One button is deliberately left alone: the homepage hero, whose text
+  comes from the client record itself (on a real client that field already carries their own offer).
 
 ## Still missing
 
