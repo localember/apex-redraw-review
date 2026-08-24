@@ -325,6 +325,13 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
 }
 
+/* `overflow: hidden` added 2026-08-24, once the harness could see the property at all
+   (style-diff-live.mjs, apex-PUNCHLIST "the style gate has no opinion about overflow"). Measured
+   across ten sampled `.bde-button__button` elements on :8098, every variant, every page: ALL TEN
+   compute `overflow: hidden` — a Breakdance button-atom base default, not a per-instance choice, so
+   it belongs on the shared class rather than waived per role. No visual consequence either way
+   (background/box-shadow already respect border-radius natively; nothing on a plain CTA protrudes
+   past it) — this converts an unmeasured-but-matching property into a measured, verified one. */
 .apx-btn {
   display: inline-flex;
   align-items: center;
@@ -333,6 +340,7 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid transparent;
   border-radius: var(--apx-r-pill);
   min-height: 0;
+  overflow: hidden;
   font-family: var(--apx-font-body);
   font-size: var(--apx-t-btn);
   font-weight: 700;
@@ -1978,8 +1986,10 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--apx-mist);
 }
 .apx-aboutcard__chip span { color: var(--apx-steel); font-size: 13px; font-weight: 600; }
+/* `overflow: hidden` — same Breakdance button-atom default `.apx-btn` carries (2026-08-24). */
 .apx-aboutcard__link {
   margin-top: 14px;
+  overflow: hidden;
   padding: 14px 24px;
   display: inline-flex;
   align-items: center;
@@ -2175,12 +2185,15 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 10px;
 }
 .apx-svccard__blurb { color: var(--apx-steel); font-family: var(--apx-font-body); font-size: 15px; line-height: 1.6; margin-bottom: 16px; }
+/* `overflow: hidden` — same Breakdance button-atom default `.apx-btn` carries (2026-08-24), on a
+   second button family this design has that isn't built off `.apx-btn`. */
 .apx-svccard__cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   align-self: flex-start;
   min-height: 0;
+  overflow: hidden;
   padding: 14px 24px;
   border: 1px solid var(--apx-brand);
   border-radius: 6px;
@@ -2512,11 +2525,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 .apx-relcard__title { font-family: var(--apx-font-head); font-size: 20px; font-weight: 700; color: var(--apx-headings); margin: 0; }
 .apx-relcard__text { color: var(--apx-steel); font-size: 15px; line-height: 1.6; margin: 0; }
+/* `overflow: hidden` — same Breakdance button-atom default `.apx-btn` carries (2026-08-24). */
 .apx-relcard__cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-height: 0;
+  overflow: hidden;
   padding: 14px 24px;
   border: 1px solid var(--apx-steel);
   border-radius: var(--apx-r-pill);
@@ -3313,11 +3328,14 @@ h1, h2, h3, h4, h5, h6 {
 .apx-form__input:focus { border-color: var(--apx-brand); background-color: var(--apx-white); outline: none; }
 textarea.apx-form__input { min-height: 100px; line-height: 1.4; resize: vertical; }
 .apx-form__footer { grid-column: span 12; border-color: var(--apx-cloud); display: flex; flex-direction: row; align-items: end; justify-content: flex-start; }
+/* `overflow: hidden` — Breakdance's form-builder submit button computes this by default too
+   (measured on :8098's own /contact/), separate CSS family from `.button-atom` but same result. */
 .apx-form__submit {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
   padding: 14px 28px;
   border: 1px solid transparent;
   border-radius: 100px;
@@ -3394,7 +3412,12 @@ textarea.apx-form__input { min-height: 100px; line-height: 1.4; resize: vertical
 }
 .apx-blogcard a::after { content: ""; position: absolute; inset: 0; z-index: 3; }
 .apx-blogcard:hover { transform: translateY(-8px); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08); }
-.apx-blogcard__body { width: 100%; padding: 22px 24px 24px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+/* `text-align: left` is new here (session 14) — every prior caller (the /blog/ index) sits inside
+   a left-aligned `.apx-bloglist__inner`, so the card never had to say so itself. The post-single
+   related-posts band reuses this SAME card inside a CENTRED header/inner, and `text-align` isn't
+   caught by `align-items: flex-start` — it inherits down through the grid independently, so
+   without this line the title/excerpt/meta would centre under the new caller. */
+.apx-blogcard__body { width: 100%; padding: 22px 24px 24px; display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: 10px; }
 /* 🔴 THE POST TITLE IS A DEFAULT BREAKDANCE BUTTON ON THE REFERENCE, AND IT LOOKS LIKE ONE.
    Verified by eye, not just by computed style: each card's headline renders as a dark navy pill
    filling the top of the card (#111827 ground, white centred text, 14/24 padding, 3px radius) —
@@ -3430,6 +3453,108 @@ textarea.apx-form__input { min-height: 100px; line-height: 1.4; resize: vertical
 .apx-bloglist__inner { padding-top: 0; padding-bottom: clamp(80px, 10vw, 120px); align-items: flex-start; }
 @media (max-width: 1023px) { .apx-bloggrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 767px)  { .apx-bloggrid { grid-template-columns: repeat(1, minmax(0, 1fr)); } }
+
+/* ── /{post-slug}/ · the single-post template ────────────────────────────────────────────────────
+   Measured off :8098 post 257 (source tree 439), session 14, 2026-08-24. See emit.py's own module
+   note above band_post_hero(): the category pill, meta line and related-posts exclusion never
+   render on :8098 for a live emitter defect unrelated to this design, so those three pieces are
+   built to the fleet's documented intent (transcribed from postCatPill()/postMeta() in
+   sections/apex-blog.mjs) rather than copied from what the broken reference happens to show. */
+.apx-posthero { background-color: var(--apx-snow); }
+.apx-posthero__inner {
+  align-items: center;
+  text-align: center;
+  padding-top: clamp(120px, 12vw, 160px);
+  padding-bottom: clamp(48px, 6vw, 72px);
+}
+/* Empty on purpose — `[rank_math_breadcrumb]` renders nothing on :8098 (a RankMath config gap,
+   not a design choice), and this build has no more of a breadcrumb to supply than the reference
+   does. Kept as a sized slot (13px/24px, from post-257.css) so a future fill does not shift the
+   band's rhythm. Its own class, not a reuse of `.apx-breadcrumb-inner` — that one belongs to
+   `band_breadcrumb()`'s standalone band and carries rules (`padding-block:0 !important`) that
+   have nothing to do with this inline slot. */
+.apx-posthero__crumb { font-size: 13px; margin-bottom: 24px; }
+/* UNMEASURED, flagged rather than guessed: node 102 never renders on :8098 (see the module note),
+   so there is no served spacing to read for catpill→h1. 8px is a placeholder gap, not a captured
+   value — correct it the day a client record puts a real category through this slot and the fix
+   can be measured on the corrected reference. */
+/* `width: auto !important`, not the band-inner default 100% — same override
+   `.apx-googlebar__row` already documents: `.apx-band__inner > *` forces every direct child to
+   full width, and a pill is meant to hug its own text. */
+.apx-postcatpill {
+  display: inline-flex;
+  width: auto !important;
+  border-radius: 100px;
+  padding: 6px 14px;
+  margin-bottom: 8px;
+  background-color: var(--apx-brand);
+  color: var(--apx-white);
+  font-family: var(--apx-font-body);
+  font-size: 12px;
+  font-weight: 700;
+}
+.apx-posthero__h1 { margin-bottom: 20px; }
+/* Same UNMEASURED caveat as the category pill — transcribed from postMeta()'s stated values
+   (sections/apex-blog.mjs), not read off a served node. */
+.apx-postmeta { margin-top: 8px; color: var(--apx-mist); font-family: var(--apx-font-body); font-size: 14px; font-weight: 600; }
+
+.apx-postfeatured__inner { padding-top: 0; padding-bottom: clamp(48px, 6vw, 72px); }
+.apx-postfeatured__img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 5px 13px 32px 0px #00000070;
+}
+/* No `image` field on apex-solo's demo posts, and the fleet placeholder-filler does not cover one
+   either (`lib/placeholders.mjs`'s post fill is `body` only) — so :8098 shows Breakdance's own
+   internal "no image set" chrome here, which is not ours to reproduce pixel-for-pixel. This is a
+   plain neutral box at the same measured aspect ratio/radius/shadow instead of disappearing,
+   per [[placeholders-not-empty-states]]. */
+.apx-postfeatured__img--empty { background-color: var(--apx-cloud); }
+
+.apx-postcontent-band { background-color: var(--apx-snow); }
+.apx-postcontent-band__inner { padding-top: 0; padding-bottom: clamp(48px, 6vw, 72px); }
+/* Plain prose sizing off post-257.css — its OWN scale, not `.apx-prose__p`'s 17px or
+   `.apx-prose__lede`'s 19px. Bare tags because the reference's own PostContent element styles
+   bare h2/p/ul via Breakdance's typography settings, not per-node classes; a client's real
+   `post.body` gets the same treatment as the fleet placeholder article. */
+.apx-postcontent p { color: var(--apx-steel); font-size: 18px; line-height: 30.6px; margin: 0 0 18px; }
+/* NOT a fixed 32px — measured wrong the first time, off a mis-sized viewport. The reference has no
+   custom h2 rule inside PostContent at all: no Breakdance element styles it, so it falls through to
+   the browser's own UA default (0.83em margin) sitting on top of `h2{font-size:var(--apx-h2)}`.
+   Re-measured at the harness's own 1440px viewport: 44px / 1.15 lh / 0.83em margin, all three
+   already the global defaults our own `h1..h6{margin:0}` reset would otherwise zero out here. */
+.apx-postcontent h2 {
+  font-family: var(--apx-font-head);
+  font-size: var(--apx-h2);
+  line-height: var(--apx-lh-head);
+  font-weight: 700;
+  color: var(--apx-headings);
+  margin: 0.83em 0;
+}
+.apx-postcontent ul { color: var(--apx-steel); font-size: 18px; line-height: 30.6px; margin: 18px 0; padding-left: 40px; }
+.apx-postcontent li { margin: 0; }
+.apx-postcontent strong { font-weight: 700; }
+
+/* Related posts: bordered snow-to-white strip (border-top/bottom/left/right 1px cloud, bg white —
+   the section is full-bleed so left/right read as a thin frame, not a column rule), the
+   `.apx-blogcard` grid reused verbatim. `.apx-relatedposts__inner` overrides `.apx-band__inner`'s
+   default `align-items: flex-start` to centre the secthead() above the grid; the grid's own cards
+   stay left-aligned via `.apx-blogcard__body`'s `text-align: left` (see that rule's own note). */
+.apx-relatedposts { background-color: var(--apx-white); border: 1px solid var(--apx-cloud); }
+.apx-relatedposts__inner { align-items: center; text-align: center; }
+.apx-relatedposts .apx-bloggrid { text-align: left; }
+
+/* Post-single's OWN reviews-block box, not `global_block()`'s flat 100px default: measured on
+   :8098 at clamp(64px,8vw,96px) top/bottom on the block's own inner container (96px at the
+   harness's 1440px viewport) -- different from /contact/'s and /new-patient-special/'s 100px,
+   scoped so neither of those pages' own measured padding moves. */
+[data-sd='postreviews.band'] [data-sd='reviewsblock.inner'] {
+  padding-top: clamp(64px, 8vw, 96px);
+  padding-bottom: clamp(64px, 8vw, 96px);
+}
 
 
 /* ── the four footer nodes nothing had ever looked at ────────────────────────
@@ -3952,7 +4077,7 @@ textarea.apx-form__input { min-height: 100px; line-height: 1.4; resize: vertical
 }
 @media (max-width: 767px) { .apx-practgrid { grid-template-columns: repeat(1, minmax(0, 1fr)); } }
 
-/* ── catalog prose: COLUMNS and TIMELINE (post 372 /prenatal/, session 12) ────────────────────────
+/* ── catalog prose: COLUMNS and TIMELINE (post 372 /prenatal/, session 14) ────────────────────────
    Two block types only one catalog entry uses, and the static renderer had neither — building the
    rest of the catalog for the preview is what surfaced them. Every value off post-372.css. */
 .apx-prose__cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-bottom: 24px; align-items: stretch; }

@@ -9,6 +9,7 @@
 (function () {
   var PAGES = {
   "/": "index.html",
+  "/5-signs-you-need-to-see-a-chiropractor/": "5-signs-you-need-to-see-a-chiropractor.html",
   "/about/": "about.html",
   "/accessibility-statement/": "accessibility-statement.html",
   "/acupuncture/": "acupuncture.html",
@@ -22,6 +23,7 @@
   "/conditions/": "conditions.html",
   "/contact/": "contact.html",
   "/decompression/": "decompression.html",
+  "/desk-posture-tips-prevent-back-pain/": "desk-posture-tips-prevent-back-pain.html",
   "/disc-injury/": "disc-injury.html",
   "/dr-alan-reyes/": "dr-alan-reyes.html",
   "/dr-sarah-whitfield/": "dr-sarah-whitfield.html",
@@ -61,6 +63,7 @@
   "/vertigo/": "vertigo.html",
   "/weight-loss/": "weight-loss.html",
   "/wellness-care/": "wellness-care.html",
+  "/what-to-expect-first-chiropractic-visit/": "what-to-expect-first-chiropractic-visit.html",
   "/whiplash/": "whiplash.html",
   "/work-injury/": "work-injury.html"
 };
